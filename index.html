@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#00BFFF">
     <title>Oloo - Stay Connected</title>
     <style>
         * {
@@ -28,20 +31,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
         }
 
         .container {
             width: 100%;
             max-width: 1400px;
             background: white;
-            border-radius: 20px;
+            border-radius: 0;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            height: 90vh;
-            max-height: 900px;
+            height: 100vh;
+            max-height: 100vh;
         }
 
         /* ========== AUTH SCREEN ========== */
@@ -50,9 +55,10 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px;
+            padding: 40px 20px;
             height: 100%;
             background: linear-gradient(135deg, var(--light-sky) 0%, var(--sky-blue) 100%);
+            overflow-y: auto;
         }
 
         .logo {
@@ -340,6 +346,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
+            min-height: 80px;
         }
 
         .chat-user-info {
@@ -467,6 +475,8 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-shrink: 0;
+            min-height: 70px;
         }
 
         .message-input {
@@ -650,11 +660,25 @@
 
         /* ========== RESPONSIVE ========== */
         @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+
+            .container {
+                border-radius: 0;
+                max-height: 100vh;
+                height: 100vh;
+            }
+
             .sidebar {
                 width: 100%;
                 position: absolute;
                 height: 100%;
                 z-index: 10;
+                display: flex;
+            }
+
+            .sidebar:not(.mobile-active) {
                 display: none;
             }
 
@@ -664,10 +688,11 @@
 
             .chat-area {
                 width: 100%;
+                height: 100%;
             }
 
             .back-btn {
-                display: block !important;
+                display: inline-block !important;
             }
 
             .features {
@@ -677,6 +702,109 @@
 
             .app-name {
                 font-size: 36px;
+            }
+
+            .welcome-screen {
+                padding: 20px;
+            }
+
+            .welcome-logo {
+                width: 120px;
+                height: 120px;
+                font-size: 60px;
+            }
+
+            .welcome-text h2 {
+                font-size: 24px;
+            }
+
+            .welcome-text p {
+                font-size: 16px;
+            }
+
+            .feature-icon {
+                font-size: 36px;
+            }
+
+            .messages-container {
+                padding: 15px;
+            }
+
+            .message-input-container {
+                padding: 10px 15px;
+                gap: 8px;
+            }
+
+            .message-input {
+                font-size: 16px;
+                padding: 10px 14px;
+            }
+
+            .send-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                flex-shrink: 0;
+            }
+
+            .icon-btn {
+                font-size: 18px;
+                padding: 8px;
+            }
+
+            .chat-header {
+                padding: 15px;
+            }
+
+            .contact-avatar {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+
+            .call-avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 50px;
+            }
+
+            .call-name {
+                font-size: 24px;
+            }
+
+            .call-status {
+                font-size: 16px;
+                margin-bottom: 40px;
+            }
+
+            .call-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            /* Ensure input is visible above keyboard */
+            .message-input-container {
+                position: relative;
+                background: #f9f9f9;
+            }
+
+            /* Fix for mobile viewport */
+            #chatContainer {
+                height: 100%;
+                max-height: 100vh;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .container {
+                border-radius: 20px;
+                height: 90vh;
+                max-height: 900px;
+            }
+
+            body {
+                padding: 20px;
             }
         }
 
@@ -1048,15 +1176,21 @@
             // Load messages
             loadMessages(contactId);
 
-            // Mobile responsive
+            // Mobile responsive - hide sidebar when chat opens
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.remove('mobile-active');
             }
+
+            // Focus on message input
+            setTimeout(() => {
+                document.getElementById('messageInput').focus();
+            }, 100);
         }
 
         function backToContacts() {
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.add('mobile-active');
+                document.getElementById('welcomeScreen').style.display = 'none';
             }
         }
 
@@ -1264,10 +1398,27 @@
         window.onload = function() {
             init();
             
-            // Mobile sidebar handling
+            // Mobile sidebar handling - show sidebar initially on mobile
             if (window.innerWidth <= 768) {
                 document.getElementById('sidebar').classList.add('mobile-active');
             }
+
+            // Prevent zoom on input focus (mobile)
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (window.innerWidth <= 768) {
+                        document.body.style.zoom = 1;
+                    }
+                });
+            });
+
+            // Handle orientation change
+            window.addEventListener('orientationchange', function() {
+                setTimeout(function() {
+                    window.scrollTo(0, 0);
+                }, 100);
+            });
         };
 
         // ========== RESPONSIVE ==========
