@@ -1,842 +1,299 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oloo App - Communication Platform</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            overflow: hidden;
-        }
-
-        .screen {
-            display: none;
-            height: 100vh;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        .login-screen {
-            background: linear-gradient(135deg, #000000 0%, #8B0000 50%, #228B22 100%);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .login-card {
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            width: 400px;
-            max-width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .logo-container {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .logo {
-            width: 96px;
-            height: 96px;
-            background: linear-gradient(135deg, #DC143C, #228B22);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-        }
-
-        .logo-text {
-            color: white;
-            font-size: 48px;
-            font-weight: bold;
-        }
-
-        .app-title {
-            font-size: 32px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 8px;
-        }
-
-        .app-subtitle {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .input-group {
-            margin-bottom: 16px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #228B22;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(90deg, #DC143C, #228B22);
-            color: white;
-            margin-bottom: 12px;
-        }
-
-        .btn-primary:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            background: white;
-            color: #228B22;
-            border: 2px solid #228B22;
-        }
-
-        .btn-secondary:hover {
-            background: #f0f9f0;
-        }
-
-        .chats-screen {
-            flex-direction: column;
-            background: #f5f5f5;
-        }
-
-        .header {
-            background: linear-gradient(90deg, #000000, #8B0000, #228B22);
-            color: white;
-            padding: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .header-logo {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .header-title {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-
-        .icon-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 10px 16px;
-            border-radius: 24px;
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            font-size: 14px;
-        }
-
-        .search-input::placeholder {
-            color: rgba(255,255,255,0.7);
-        }
-
-        .search-input:focus {
-            outline: none;
-            background: rgba(255,255,255,0.3);
-        }
-
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .chat-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            border-bottom: 1px solid #e0e0e0;
-            cursor: pointer;
-            transition: background 0.2s;
-            background: white;
-        }
-
-        .chat-item:hover {
-            background: #f0f0f0;
-        }
-
-        .avatar-container {
-            position: relative;
-        }
-
-        .avatar {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, #DC143C, #228B22);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .online-indicator {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 12px;
-            height: 12px;
-            background: #22c55e;
-            border-radius: 50%;
-            border: 2px solid white;
-        }
-
-        .chat-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .chat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 4px;
-        }
-
-        .chat-name {
-            font-weight: 600;
-            color: #333;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .chat-time {
-            font-size: 12px;
-            color: #666;
-            margin-left: 8px;
-        }
-
-        .chat-last-msg {
-            font-size: 14px;
-            color: #666;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .unread-badge {
-            width: 24px;
-            height: 24px;
-            background: #228B22;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .bottom-nav {
-            background: white;
-            border-top: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 24px;
-            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: #666;
-            transition: color 0.2s;
-        }
-
-        .nav-item.active {
-            color: #228B22;
-        }
-
-        .nav-item:hover {
-            color: #228B22;
-        }
-
-        .nav-label {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .chat-detail-screen {
-            flex-direction: column;
-            background: #f5f5f5;
-        }
-
-        .chat-detail-header {
-            background: linear-gradient(90deg, #000000, #8B0000, #228B22);
-            color: white;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
-        .chat-detail-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .chat-detail-avatar {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .chat-detail-info h3 {
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .chat-status {
-            font-size: 12px;
-            color: #90EE90;
-        }
-
-        .chat-detail-actions {
-            display: flex;
-            gap: 16px;
-        }
-
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            padding: 16px;
-            position: relative;
-            background-color: #e8dcc4;
-            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='hieroglyphs' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ctext x='10' y='30' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓀀%3C/text%3E%3Ctext x='50' y='30' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓁐%3C/text%3E%3Ctext x='10' y='70' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓃀%3C/text%3E%3Ctext x='50' y='70' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓆣%3C/text%3E%3C/pattern%3E%3C/defs%3E%3Crect width='400' height='400' fill='%23e8dcc4'/%3E%3Crect width='400' height='400' fill='url(%23hieroglyphs)'/%3E%3C/svg%3E");
-        }
-
-        .horus-eagle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 120px;
-            opacity: 0.1;
-            pointer-events: none;
-        }
-
-        .messages-container {
-            position: relative;
-            z-index: 10;
-        }
-
-        .message {
-            display: flex;
-            margin-bottom: 12px;
-        }
-
-        .message.sent {
-            justify-content: flex-end;
-        }
-
-        .message.received {
-            justify-content: flex-start;
-        }
-
-        .message-bubble {
-            max-width: 70%;
-            padding: 10px 14px;
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .message.sent .message-bubble {
-            background: linear-gradient(135deg, #228B22, #1a7a1a);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.received .message-bubble {
-            background: white;
-            color: #333;
-            border-bottom-left-radius: 4px;
-        }
-
-        .message-text {
-            font-size: 14px;
-            margin-bottom: 4px;
-        }
-
-        .message-meta {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 4px;
-            font-size: 11px;
-        }
-
-        .message.sent .message-meta {
-            color: rgba(255,255,255,0.7);
-        }
-
-        .message.received .message-meta {
-            color: #666;
-        }
-
-        .message-input-area {
-            background: white;
-            border-top: 1px solid #e0e0e0;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .message-input {
-            flex: 1;
-            padding: 10px 16px;
-            border: 2px solid #ddd;
-            border-radius: 24px;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .message-input:focus {
-            border-color: #228B22;
-        }
-
-        .send-btn {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #228B22, #1a7a1a);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .send-btn:hover {
-            box-shadow: 0 4px 12px rgba(34, 139, 34, 0.4);
-            transform: scale(1.05);
-        }
-
-        .mic-btn {
-            background: linear-gradient(135deg, #DC143C, #8B0000);
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            transition: background 0.2s;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        @media (max-width: 768px) {
-            .login-card {
-                width: 90%;
-                padding: 32px 24px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div id="loginScreen" class="screen login-screen active">
-        <div class="login-card">
-            <div class="logo-container">
-                <div class="logo">
-                    <span class="logo-text">O</span>
-                </div>
-                <h1 class="app-title">Oloo App</h1>
-                <p class="app-subtitle">Stay Connected, Always</p>
+import React, { useState } from 'react';
+import { MessageCircle, Phone, Video, Settings, Users, Search, Send, ArrowLeft, MoreVertical, Check, CheckCheck, Mic, Paperclip, Camera, Smile } from 'lucide-react';
+
+const OlooApp = () => {
+  const [currentScreen, setCurrentScreen] = useState('login');
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [message, setMessage] = useState('');
+  const [chatMessages, setChatMessages] = useState({
+    1: [
+      { id: 1, text: 'Hey! How are you?', sent: false, time: '10:30 AM', read: true },
+      { id: 2, text: 'I am good, thanks! How about you?', sent: true, time: '10:32 AM', read: true },
+      { id: 3, text: 'Doing great! Want to catch up later?', sent: false, time: '10:35 AM', read: true },
+      { id: 4, text: 'Sure, sounds good!', sent: true, time: '10:36 AM', read: true }
+    ],
+    2: [
+      { id: 1, text: 'Did you see the game last night?', sent: false, time: '9:15 AM', read: true },
+      { id: 2, text: 'Yes! It was amazing!', sent: true, time: '9:20 AM', read: true }
+    ],
+    3: [
+      { id: 1, text: 'Meeting at 3 PM today', sent: false, time: 'Yesterday', read: true }
+    ]
+  });
+
+  const contacts = [
+    { id: 1, name: 'John Kamau', lastMsg: 'Sure, sounds good!', time: '10:36 AM', unread: 0, online: true },
+    { id: 2, name: 'Mary Wanjiku', lastMsg: 'Yes! It was amazing!', time: '9:20 AM', unread: 2, online: true },
+    { id: 3, name: 'David Ochieng', lastMsg: 'Meeting at 3 PM today', time: 'Yesterday', unread: 0, online: false },
+    { id: 4, name: 'Grace Akinyi', lastMsg: 'Thanks for your help!', time: 'Yesterday', unread: 0, online: false },
+    { id: 5, name: 'Peter Mwangi', lastMsg: 'See you tomorrow', time: '2 days ago', unread: 1, online: true }
+  ];
+
+  const handleSendMessage = () => {
+    if (message.trim() && selectedChat) {
+      const newMessage = {
+        id: chatMessages[selectedChat.id].length + 1,
+        text: message,
+        sent: true,
+        time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+        read: false
+      };
+      setChatMessages({
+        ...chatMessages,
+        [selectedChat.id]: [...chatMessages[selectedChat.id], newMessage]
+      });
+      setMessage('');
+    }
+  };
+
+  // Login Screen
+  if (currentScreen === 'login') {
+    return (
+      <div className="h-screen bg-gradient-to-br from-black via-red-900 to-green-800 flex items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 w-96">
+          <div className="text-center mb-8">
+            <div className="w-24 h-24 bg-gradient-to-br from-red-600 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <span className="text-white text-5xl font-bold">O</span>
             </div>
-            <div class="input-group">
-                <input type="tel" placeholder="Phone Number" id="loginPhone">
-            </div>
-            <div class="input-group">
-                <input type="password" placeholder="Password" id="loginPassword">
-            </div>
-            <button class="btn btn-primary" onclick="showScreen('chatsScreen')">Login</button>
-            <button class="btn btn-secondary" onclick="showScreen('signupScreen')">Create Account</button>
+            <h1 className="text-3xl font-bold text-gray-800">Oloo App</h1>
+            <p className="text-gray-500 mt-2">Stay Connected, Always</p>
+          </div>
+          
+          <div className="space-y-4">
+            <input
+              type="tel"
+              placeholder="Phone Number"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none"
+            />
+            <button
+              onClick={() => setCurrentScreen('chats')}
+              className="w-full bg-gradient-to-r from-red-600 to-green-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setCurrentScreen('signup')}
+              className="w-full border-2 border-green-600 text-green-600 py-3 rounded-lg font-semibold hover:bg-green-50 transition-all"
+            >
+              Create Account
+            </button>
+          </div>
         </div>
+      </div>
+    );
+  }
+
+  // Signup Screen
+  if (currentScreen === 'signup') {
+    return (
+      <div className="h-screen bg-gradient-to-br from-black via-red-900 to-green-800 flex items-center justify-center">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 w-96">
+          <button onClick={() => setCurrentScreen('login')} className="mb-4 text-gray-600 hover:text-gray-800">
+            <ArrowLeft size={24} />
+          </button>
+          
+          <div className="text-center mb-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-red-600 to-green-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+              <span className="text-white text-4xl font-bold">O</span>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-800">Create Account</h2>
+          </div>
+          
+          <div className="space-y-3">
+            <input type="text" placeholder="Full Name" className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none" />
+            <input type="tel" placeholder="Phone Number" className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none" />
+            <input type="email" placeholder="Email (Optional)" className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none" />
+            <input type="password" placeholder="Password" className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none" />
+            <input type="password" placeholder="Confirm Password" className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-green-600 focus:outline-none" />
+            <button
+              onClick={() => setCurrentScreen('chats')}
+              className="w-full bg-gradient-to-r from-red-600 to-green-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+            >
+              Sign Up
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Chat Detail Screen
+  if (currentScreen === 'chatDetail' && selectedChat) {
+    return (
+      <div className="h-screen flex flex-col bg-gray-100">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-black via-red-800 to-green-700 text-white px-4 py-3 flex items-center justify-between shadow-lg">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setCurrentScreen('chats')} className="hover:bg-white/20 p-1 rounded">
+              <ArrowLeft size={24} />
+            </button>
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold">
+              {selectedChat.name[0]}
+            </div>
+            <div>
+              <h3 className="font-semibold">{selectedChat.name}</h3>
+              <p className="text-xs text-green-200">{selectedChat.online ? 'Online' : 'Last seen recently'}</p>
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <button className="hover:bg-white/20 p-2 rounded"><Video size={20} /></button>
+            <button className="hover:bg-white/20 p-2 rounded"><Phone size={20} /></button>
+            <button className="hover:bg-white/20 p-2 rounded"><MoreVertical size={20} /></button>
+          </div>
+        </div>
+
+        {/* Chat Messages with Egyptian Background */}
+        <div className="flex-1 overflow-y-auto p-4 relative" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='hieroglyphs' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ctext x='10' y='30' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓀀%3C/text%3E%3Ctext x='50' y='30' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓁐%3C/text%3E%3Ctext x='10' y='70' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓃀%3C/text%3E%3Ctext x='50' y='70' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓆣%3C/text%3E%3C/pattern%3E%3C/defs%3E%3Crect width='400' height='400' fill='%23e8dcc4'/%3E%3Crect width='400' height='400' fill='url(%23hieroglyphs)'/%3E%3C/svg%3E")`,
+          backgroundColor: '#e8dcc4'
+        }}>
+          {/* Horus Eagle in center */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="text-9xl opacity-10">🦅</div>
+          </div>
+
+          {/* Messages */}
+          <div className="space-y-3 relative z-10">
+            {chatMessages[selectedChat.id]?.map((msg) => (
+              <div key={msg.id} className={`flex ${msg.sent ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-xs px-4 py-2 rounded-2xl shadow ${
+                  msg.sent 
+                    ? 'bg-gradient-to-r from-green-600 to-green-700 text-white rounded-br-none' 
+                    : 'bg-white text-gray-800 rounded-bl-none'
+                }`}>
+                  <p className="text-sm">{msg.text}</p>
+                  <div className="flex items-center justify-end gap-1 mt-1">
+                    <span className={`text-xs ${msg.sent ? 'text-green-100' : 'text-gray-500'}`}>
+                      {msg.time}
+                    </span>
+                    {msg.sent && (
+                      msg.read ? <CheckCheck size={14} className="text-blue-300" /> : <Check size={14} className="text-green-100" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Message Input */}
+        <div className="bg-white border-t border-gray-200 px-4 py-3 flex items-center gap-2">
+          <button className="text-gray-500 hover:text-gray-700 p-2">
+            <Smile size={24} />
+          </button>
+          <button className="text-gray-500 hover:text-gray-700 p-2">
+            <Paperclip size={24} />
+          </button>
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+            placeholder="Type a message..."
+            className="flex-1 px-4 py-2 border-2 border-gray-300 rounded-full focus:border-green-600 focus:outline-none"
+          />
+          {message.trim() ? (
+            <button onClick={handleSendMessage} className="bg-gradient-to-r from-green-600 to-green-700 text-white p-3 rounded-full hover:shadow-lg">
+              <Send size={20} />
+            </button>
+          ) : (
+            <button className="bg-gradient-to-r from-red-600 to-red-700 text-white p-3 rounded-full hover:shadow-lg">
+              <Mic size={20} />
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Main Chats Screen
+  return (
+    <div className="h-screen flex flex-col bg-gray-50">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-black via-red-800 to-green-700 text-white px-4 py-4 shadow-lg">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center font-bold">
+              O
+            </div>
+            <h1 className="text-2xl font-bold">Oloo</h1>
+          </div>
+          <div className="flex gap-4">
+            <button className="hover:bg-white/20 p-2 rounded"><Camera size={22} /></button>
+            <button className="hover:bg-white/20 p-2 rounded"><Search size={22} /></button>
+            <button className="hover:bg-white/20 p-2 rounded"><MoreVertical size={22} /></button>
+          </div>
+        </div>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search chats..."
+            className="w-full px-4 py-2 rounded-full bg-white/20 placeholder-white/70 text-white focus:bg-white/30 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {/* Chats List */}
+      <div className="flex-1 overflow-y-auto">
+        {contacts.map((contact) => (
+          <div
+            key={contact.id}
+            onClick={() => {
+              setSelectedChat(contact);
+              setCurrentScreen('chatDetail');
+            }}
+            className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 cursor-pointer border-b border-gray-200 transition-colors"
+          >
+            <div className="relative">
+              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold shadow">
+                {contact.name[0]}
+              </div>
+              {contact.online && (
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-baseline">
+                <h3 className="font-semibold text-gray-800 truncate">{contact.name}</h3>
+                <span className="text-xs text-gray-500 ml-2">{contact.time}</span>
+              </div>
+              <p className="text-sm text-gray-600 truncate">{contact.lastMsg}</p>
+            </div>
+            {contact.unread > 0 && (
+              <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                <span className="text-xs text-white font-bold">{contact.unread}</span>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="bg-white border-t border-gray-200 px-6 py-3 flex justify-around shadow-lg">
+        <button className="flex flex-col items-center gap-1 text-green-700">
+          <MessageCircle size={24} />
+          <span className="text-xs font-semibold">Chats</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-gray-500 hover:text-green-700">
+          <Users size={24} />
+          <span className="text-xs">Contacts</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-gray-500 hover:text-green-700">
+          <Phone size={24} />
+          <span className="text-xs">Calls</span>
+        </button>
+        <button className="flex flex-col items-center gap-1 text-gray-500 hover:text-green-700">
+          <Settings size={24} />
+          <span className="text-xs">Settings</span>
+        </button>
+      </div>
     </div>
+  );
+};
 
-    <div id="signupScreen" class="screen login-screen">
-        <div class="login-card">
-            <button class="back-btn" onclick="showScreen('loginScreen')" style="color: #228B22; margin-bottom: 16px;">
-                <i data-feather="arrow-left"></i>
-            </button>
-            <div class="logo-container">
-                <div class="logo" style="width: 80px; height: 80px;">
-                    <span class="logo-text" style="font-size: 40px;">O</span>
-                </div>
-                <h2 class="app-title" style="font-size: 24px;">Create Account</h2>
-            </div>
-            <div class="input-group">
-                <input type="text" placeholder="Full Name">
-            </div>
-            <div class="input-group">
-                <input type="tel" placeholder="Phone Number">
-            </div>
-            <div class="input-group">
-                <input type="email" placeholder="Email (Optional)">
-            </div>
-            <div class="input-group">
-                <input type="password" placeholder="Password">
-            </div>
-            <div class="input-group">
-                <input type="password" placeholder="Confirm Password">
-            </div>
-            <button class="btn btn-primary" onclick="showScreen('chatsScreen')">Sign Up</button>
-        </div>
-    </div>
-
-    <div id="chatsScreen" class="screen chats-screen">
-        <div class="header">
-            <div class="header-top">
-                <div class="header-left">
-                    <div class="header-logo">O</div>
-                    <h1 class="header-title">Oloo</h1>
-                </div>
-                <div class="header-actions">
-                    <button class="icon-btn"><i data-feather="camera"></i></button>
-                    <button class="icon-btn"><i data-feather="search"></i></button>
-                    <button class="icon-btn"><i data-feather="more-vertical"></i></button>
-                </div>
-            </div>
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="Search chats...">
-            </div>
-        </div>
-
-        <div class="chat-list" id="chatList">
-            <div class="chat-item" onclick="openChat('John Kamau', true)">
-                <div class="avatar-container">
-                    <div class="avatar">J</div>
-                    <div class="online-indicator"></div>
-                </div>
-                <div class="chat-info">
-                    <div class="chat-header">
-                        <span class="chat-name">John Kamau</span>
-                        <span class="chat-time">10:36 AM</span>
-                    </div>
-                    <p class="chat-last-msg">Sure, sounds good!</p>
-                </div>
-            </div>
-
-            <div class="chat-item" onclick="openChat('Mary Wanjiku', true)">
-                <div class="avatar-container">
-                    <div class="avatar">M</div>
-                    <div class="online-indicator"></div>
-                </div>
-                <div class="chat-info">
-                    <div class="chat-header">
-                        <span class="chat-name">Mary Wanjiku</span>
-                        <span class="chat-time">9:20 AM</span>
-                    </div>
-                    <p class="chat-last-msg">Yes! It was amazing!</p>
-                </div>
-                <div class="unread-badge">2</div>
-            </div>
-
-            <div class="chat-item" onclick="openChat('David Ochieng', false)">
-                <div class="avatar-container">
-                    <div class="avatar">D</div>
-                </div>
-                <div class="chat-info">
-                    <div class="chat-header">
-                        <span class="chat-name">David Ochieng</span>
-                        <span class="chat-time">Yesterday</span>
-                    </div>
-                    <p class="chat-last-msg">Meeting at 3 PM today</p>
-                </div>
-            </div>
-
-            <div class="chat-item" onclick="openChat('Grace Akinyi', false)">
-                <div class="avatar-container">
-                    <div class="avatar">G</div>
-                </div>
-                <div class="chat-info">
-                    <div class="chat-header">
-                        <span class="chat-name">Grace Akinyi</span>
-                        <span class="chat-time">Yesterday</span>
-                    </div>
-                    <p class="chat-last-msg">Thanks for your help!</p>
-                </div>
-            </div>
-
-            <div class="chat-item" onclick="openChat('Peter Mwangi', true)">
-                <div class="avatar-container">
-                    <div class="avatar">P</div>
-                    <div class="online-indicator"></div>
-                </div>
-                <div class="chat-info">
-                    <div class="chat-header">
-                        <span class="chat-name">Peter Mwangi</span>
-                        <span class="chat-time">2 days ago</span>
-                    </div>
-                    <p class="chat-last-msg">See you tomorrow</p>
-                </div>
-                <div class="unread-badge">1</div>
-            </div>
-        </div>
-
-        <div class="bottom-nav">
-            <button class="nav-item active">
-                <i data-feather="message-circle"></i>
-                <span class="nav-label">Chats</span>
-            </button>
-            <button class="nav-item">
-                <i data-feather="users"></i>
-                <span class="nav-label">Contacts</span>
-            </button>
-            <button class="nav-item">
-                <i data-feather="phone"></i>
-                <span class="nav-label">Calls</span>
-            </button>
-            <button class="nav-item">
-                <i data-feather="settings"></i>
-                <span class="nav-label">Settings</span>
-            </button>
-        </div>
-    </div>
-
-    <div id="chatDetailScreen" class="screen chat-detail-screen">
-        <div class="chat-detail-header">
-            <div class="chat-detail-left">
-                <button class="back-btn" onclick="showScreen('chatsScreen')">
-                    <i data-feather="arrow-left"></i>
-                </button>
-                <div class="chat-detail-avatar" id="chatDetailAvatar">J</div>
-                <div class="chat-detail-info">
-                    <h3 id="chatDetailName">John Kamau</h3>
-                    <p class="chat-status" id="chatDetailStatus">Online</p>
-                </div>
-            </div>
-            <div class="chat-detail-actions">
-                <button class="icon-btn"><i data-feather="video"></i></button>
-                <button class="icon-btn"><i data-feather="phone"></i></button>
-                <button class="icon-btn"><i data-feather="more-vertical"></i></button>
-            </div>
-        </div>
-
-        <div class="messages-area">
-            <div class="horus-eagle">🦅</div>
-            <div class="messages-container" id="messagesContainer">
-                <div class="message received">
-                    <div class="message-bubble">
-                        <p class="message-text">Hey! How are you?</p>
-                        <div class="message-meta">
-                            <span>10:30 AM</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="message sent">
-                    <div class="message-bubble">
-                        <p class="message-text">I am good, thanks! How about you?</p>
-                        <div class="message-meta">
-                            <span>10:32 AM</span>
-                            <i data-feather="check-check" style="width: 14px; height: 14px;"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="message received">
-                    <div class="message-bubble">
-                        <p class="message-text">Doing great! Want to catch up later?</p>
-                        <div class="message-meta">
-                            <span>10:35 AM</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="message sent">
-                    <div class="message-bubble">
-                        <p class="message-text">Sure, sounds good!</p>
-                        <div class="message-meta">
-                            <span>10:36 AM</span>
-                            <i data-feather="check-check" style="width: 14px; height: 14px;"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="message-input-area">
-            <button class="icon-btn" style="color: #666;">
-                <i data-feather="smile"></i>
-            </button>
-            <button class="icon-btn" style="color: #666;">
-                <i data-feather="paperclip"></i>
-            </button>
-            <input type="text" class="message-input" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-                <i data-feather="send" style="width: 20px; height: 20px;"></i>
-            </button>
-        </div>
-    </div>
-
-    <script>
-        var currentChatName = '';
-        var currentChatOnline = false;
-
-        function showScreen(screenId) {
-            var screens = document.querySelectorAll('.screen');
-            for (var i = 0; i < screens.length; i++) {
-                screens[i].classList.remove('active');
-            }
-            document.getElementById(screenId).classList.add('active');
-            feather.replace();
-        }
-
-        function openChat(name, isOnline) {
-            currentChatName = name;
-            currentChatOnline = isOnline;
-            
-            document.getElementById('chatDetailName').textContent = name;
-            document.getElementById('chatDetailAvatar').textContent = name[0];
-            document.getElementById('chatDetailStatus').textContent = isOnline ? 'Online' : 'Last seen recently';
-            
-            showScreen('chatDetailScreen');
-        }
-
-        function sendMessage() {
-            var input = document.getElementById('messageInput');
-            var message = input.value.trim();
-            
-            if (message) {
-                var container = document.getElementById('messagesContainer');
-                var now = new Date();
-                var time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-                
-                var messageDiv = document.createElement('div');
-                messageDiv.className = 'message sent';
-                messageDiv.innerHTML = '<div class="message-bubble"><p class="message-text">' + message + '</p><div class="message-meta"><span>' + time + '</span><i data-feather="check" style="width: 14px; height: 14px;"></i></div></div>';
-                
-                container.appendChild(messageDiv);
-                input.value = '';
-                
-                var messagesArea = container.parentElement;
-                messagesArea.scrollTop = messagesArea.scrollHeight;
-                
-                feather.replace();
-            }
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var input = document.getElementById('messageInput');
-            var sendBtn = document.getElementById('sendBtn');
-            
-            if (input && sendBtn) {
-                input.addEventListener('input', function() {
-                    if (input.value.trim()) {
-                        sendBtn.innerHTML = '<i data-feather="send" style="width: 20px; height: 20px;"></i>';
-                        sendBtn.className = 'send-btn';
-                    } else {
-                        sendBtn.innerHTML = '<i data-feather="mic" style="width: 20px; height: 20px;"></i>';
-                        sendBtn.className = 'send-btn mic-btn';
-                    }
-                    feather.replace();
-                });
-            }
-            
-            feather.replace();
-        });
-    </script>
-</body>
-</html>
+export default OlooApp;
