@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oloo - Stay Connected</title>
+    <title>Oloo App - Communication Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -11,1061 +12,803 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --sky-blue: #87CEEB;
-            --deep-sky: #00BFFF;
-            --light-sky: #E0F6FF;
-            --gold: #FFD700;
-            --dark-text: #2C3E50;
-            --white: #FFFFFF;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--deep-sky) 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            height: 90vh;
-            max-height: 800px;
         }
 
-        /* Auth Screen */
-        .auth-screen {
+        .screen {
+            display: none;
+            height: 100vh;
+        }
+
+        .screen.active {
             display: flex;
-            flex-direction: column;
+        }
+
+        .login-screen {
+            background: linear-gradient(135deg, #000000 0%, #8B0000 50%, #228B22 100%);
             justify-content: center;
             align-items: center;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 24px;
             padding: 40px;
-            height: 100%;
-            background: linear-gradient(135deg, var(--light-sky) 0%, var(--sky-blue) 100%);
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 32px;
         }
 
         .logo {
-            width: 120px;
-            height: 120px;
-            background: linear-gradient(135deg, var(--deep-sky), var(--sky-blue));
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, #DC143C, #228B22);
             border-radius: 50%;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 64px;
-            font-weight: bold;
-            color: white;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            justify-content: center;
+            margin: 0 auto 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
-        .app-name {
+        .logo-text {
+            color: white;
             font-size: 48px;
             font-weight: bold;
-            color: var(--deep-sky);
-            margin-bottom: 10px;
         }
 
-        .tagline {
-            font-size: 18px;
-            color: var(--dark-text);
-            margin-bottom: 40px;
-            text-align: center;
+        .app-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
         }
 
-        .auth-form {
-            width: 100%;
-            max-width: 400px;
+        .app-subtitle {
+            color: #666;
+            font-size: 14px;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--dark-text);
-            font-weight: 600;
-        }
-
-        .input-group input {
+        input {
             width: 100%;
-            padding: 15px;
-            border: 2px solid var(--sky-blue);
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border 0.3s;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
         }
 
-        .input-group input:focus {
+        input:focus {
             outline: none;
-            border-color: var(--deep-sky);
+            border-color: #228B22;
         }
 
         .btn {
             width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
+            border: none;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--deep-sky), var(--sky-blue));
+            background: linear-gradient(90deg, #DC143C, #228B22);
             color: white;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .btn-primary:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,191,255,0.4);
         }
 
         .btn-secondary {
-            background: transparent;
-            color: var(--deep-sky);
-            border: 2px solid var(--deep-sky);
+            background: white;
+            color: #228B22;
+            border: 2px solid #228B22;
         }
 
         .btn-secondary:hover {
-            background: var(--light-sky);
+            background: #f0f9f0;
         }
 
-        /* Main App Layout */
-        .app-container {
-            display: none;
-            height: 100%;
-            flex-direction: row;
-        }
-
-        .app-container.active {
-            display: flex;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 350px;
-            background: var(--light-sky);
-            border-right: 1px solid #ddd;
-            display: flex;
+        .chats-screen {
             flex-direction: column;
+            background: #f5f5f5;
         }
 
-        .sidebar-header {
-            padding: 20px;
-            background: linear-gradient(135deg, var(--deep-sky), var(--sky-blue));
+        .header {
+            background: linear-gradient(90deg, #000000, #8B0000, #228B22);
             color: white;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 12px;
         }
 
-        .user-profile {
+        .header-left {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .avatar {
+        .header-logo {
             width: 40px;
             height: 40px;
+            background: rgba(255,255,255,0.2);
             border-radius: 50%;
-            background: white;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
             font-weight: bold;
-            color: var(--deep-sky);
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .header-actions {
             display: flex;
-            gap: 15px;
+            gap: 16px;
         }
 
         .icon-btn {
-            background: transparent;
+            background: none;
             border: none;
             color: white;
-            font-size: 20px;
             cursor: pointer;
-            transition: transform 0.2s;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
         }
 
         .icon-btn:hover {
-            transform: scale(1.2);
+            background: rgba(255,255,255,0.2);
         }
 
-        .search-bar {
-            padding: 15px;
-            background: white;
+        .search-box {
+            position: relative;
         }
 
-        .search-bar input {
+        .search-input {
             width: 100%;
-            padding: 12px;
-            border: 2px solid var(--sky-blue);
-            border-radius: 25px;
+            padding: 10px 16px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
             font-size: 14px;
         }
 
-        .contacts-list {
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.3);
+        }
+
+        .chat-list {
             flex: 1;
             overflow-y: auto;
         }
 
-        .contact-item {
-            padding: 15px 20px;
+        .chat-item {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
             cursor: pointer;
             transition: background 0.2s;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .contact-item:hover {
             background: white;
         }
 
-        .contact-item.active {
-            background: white;
-            border-left: 4px solid var(--deep-sky);
+        .chat-item:hover {
+            background: #f0f0f0;
         }
 
-        .contact-avatar {
-            width: 50px;
-            height: 50px;
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #DC143C, #228B22);
             border-radius: 50%;
-            background: var(--sky-blue);
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-weight: bold;
+            justify-content: center;
             color: white;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .contact-info {
-            flex: 1;
-        }
-
-        .contact-name {
-            font-weight: 600;
-            color: var(--dark-text);
-            margin-bottom: 5px;
-        }
-
-        .contact-message {
-            font-size: 14px;
-            color: #666;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .contact-time {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .status-indicator {
+        .online-indicator {
+            position: absolute;
+            bottom: 0;
+            right: 0;
             width: 12px;
             height: 12px;
+            background: #22c55e;
             border-radius: 50%;
-            background: #4CAF50;
-            position: relative;
-            top: -10px;
-            left: -15px;
+            border: 2px solid white;
         }
 
-        /* Chat Area */
-        .chat-area {
+        .chat-info {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: white;
+            min-width: 0;
         }
 
         .chat-header {
-            padding: 20px;
-            background: linear-gradient(135deg, var(--deep-sky), var(--sky-blue));
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 4px;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #666;
+            margin-left: 8px;
+        }
+
+        .chat-last-msg {
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .unread-badge {
+            width: 24px;
+            height: 24px;
+            background: #228B22;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 24px;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #228B22;
+        }
+
+        .nav-item:hover {
+            color: #228B22;
+        }
+
+        .nav-label {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .chat-detail-screen {
+            flex-direction: column;
+            background: #f5f5f5;
+        }
+
+        .chat-detail-header {
+            background: linear-gradient(90deg, #000000, #8B0000, #228B22);
+            color: white;
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
-        .chat-user-info {
+        .chat-detail-left {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
-        .chat-actions {
+        .chat-detail-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
             display: flex;
-            gap: 20px;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
         }
 
-        .messages-container {
+        .chat-detail-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chat-status {
+            font-size: 12px;
+            color: #90EE90;
+        }
+
+        .chat-detail-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .messages-area {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
-            background: #F5F5DC;
+            padding: 16px;
             position: relative;
+            background-color: #e8dcc4;
+            background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='hieroglyphs' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3Ctext x='10' y='30' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓀀%3C/text%3E%3Ctext x='50' y='30' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓁐%3C/text%3E%3Ctext x='10' y='70' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓃀%3C/text%3E%3Ctext x='50' y='70' font-size='24' fill='%23d4c5a9' opacity='0.15'%3E𓆣%3C/text%3E%3C/pattern%3E%3C/defs%3E%3Crect width='400' height='400' fill='%23e8dcc4'/%3E%3Crect width='400' height='400' fill='url(%23hieroglyphs)'/%3E%3C/svg%3E");
         }
 
-        .hieroglyphic-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0.05;
-            font-size: 40px;
-            line-height: 60px;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .ankh-symbol {
+        .horus-eagle {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 200px;
-            opacity: 0.03;
-            color: var(--gold);
+            font-size: 120px;
+            opacity: 0.1;
+            pointer-events: none;
         }
 
-        .messages {
+        .messages-container {
             position: relative;
-            z-index: 1;
+            z-index: 10;
         }
 
         .message {
-            margin-bottom: 15px;
             display: flex;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            margin-bottom: 12px;
         }
 
         .message.sent {
             justify-content: flex-end;
         }
 
-        .message-bubble {
-            max-width: 60%;
-            padding: 12px 16px;
-            border-radius: 18px;
-            position: relative;
+        .message.received {
+            justify-content: flex-start;
         }
 
-        .message.received .message-bubble {
-            background: white;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .message.sent .message-bubble {
-            background: linear-gradient(135deg, var(--deep-sky), var(--sky-blue));
+            background: linear-gradient(135deg, #228B22, #1a7a1a);
             color: white;
             border-bottom-right-radius: 4px;
         }
 
-        .message-text {
-            margin-bottom: 5px;
-        }
-
-        .message-time {
-            font-size: 11px;
-            opacity: 0.7;
-            text-align: right;
-        }
-
-        .message-input-container {
-            padding: 20px;
+        .message.received .message-bubble {
             background: white;
-            border-top: 1px solid #ddd;
+            color: #333;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-text {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .message-meta {
             display: flex;
-            gap: 10px;
             align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            font-size: 11px;
+        }
+
+        .message.sent .message-meta {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .message.received .message-meta {
+            color: #666;
+        }
+
+        .message-input-area {
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .message-input {
             flex: 1;
-            padding: 12px 16px;
-            border: 2px solid var(--sky-blue);
-            border-radius: 25px;
-            font-size: 16px;
-            font-family: inherit;
+            padding: 10px 16px;
+            border: 2px solid #ddd;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
         }
 
         .message-input:focus {
-            outline: none;
-            border-color: var(--deep-sky);
+            border-color: #228B22;
         }
 
         .send-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--deep-sky), var(--sky-blue));
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #228B22, #1a7a1a);
             border: none;
+            border-radius: 50%;
             color: white;
-            font-size: 20px;
             cursor: pointer;
             display: flex;
-            justify-content: center;
             align-items: center;
-            transition: transform 0.2s;
+            justify-content: center;
+            transition: all 0.3s;
         }
 
         .send-btn:hover {
-            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(34, 139, 34, 0.4);
+            transform: scale(1.05);
         }
 
-        /* Welcome Screen */
-        .welcome-screen {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            background: var(--light-sky);
+        .mic-btn {
+            background: linear-gradient(135deg, #DC143C, #8B0000);
         }
 
-        .welcome-logo {
-            width: 150px;
-            height: 150px;
-            background: linear-gradient(135deg, var(--deep-sky), var(--sky-blue));
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 80px;
-            color: white;
-            margin-bottom: 30px;
-        }
-
-        .welcome-text {
-            font-size: 24px;
-            color: var(--dark-text);
-            text-align: center;
-            max-width: 500px;
-        }
-
-        .features {
-            margin-top: 30px;
-            display: flex;
-            gap: 30px;
-        }
-
-        .feature {
-            text-align: center;
-        }
-
-        .feature-icon {
-            font-size: 40px;
-            margin-bottom: 10px;
-        }
-
-        .feature-text {
-            font-size: 14px;
-            color: var(--dark-text);
-        }
-
-        /* Call Modal */
-        .call-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .call-modal.active {
-            display: flex;
-        }
-
-        .call-content {
-            text-align: center;
-            color: white;
-        }
-
-        .call-avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: var(--sky-blue);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 60px;
-            margin: 0 auto 30px;
-        }
-
-        .call-name {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .call-status {
-            font-size: 18px;
-            margin-bottom: 50px;
-            color: #ccc;
-        }
-
-        .call-actions {
-            display: flex;
-            gap: 30px;
-            justify-content: center;
-        }
-
-        .call-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
+        .back-btn {
+            background: none;
             border: none;
-            font-size: 30px;
+            color: white;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .call-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .call-btn.end {
-            background: #f44336;
-            color: white;
-        }
-
-        .call-btn.mute {
-            background: #666;
-            color: white;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 100%;
-                display: none;
-            }
-
-            .sidebar.mobile-active {
-                display: flex;
-            }
-
-            .chat-area {
-                display: none;
-            }
-
-            .chat-area.mobile-active {
-                display: flex;
-            }
-
-            .app-container {
-                flex-direction: column;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--sky-blue);
+            padding: 8px;
             border-radius: 4px;
+            display: flex;
+            align-items: center;
+            transition: background 0.2s;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--deep-sky);
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .login-card {
+                width: 90%;
+                padding: 32px 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Authentication Screen -->
-        <div class="auth-screen" id="authScreen">
-            <div class="logo">O</div>
-            <div class="app-name">Oloo</div>
-            <div class="tagline">Stay Connected - Even Without Data</div>
-            
-            <div class="auth-form">
-                <div id="loginForm">
-                    <div class="input-group">
-                        <label>Phone Number</label>
-                        <input type="tel" id="loginPhone" placeholder="+254 700 000 000">
-                    </div>
-                    <div class="input-group">
-                        <label>Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password">
-                    </div>
-                    <button class="btn btn-primary" onclick="login()">Login</button>
-                    <button class="btn btn-secondary" onclick="showSignup()">Create Account</button>
+    <div id="loginScreen" class="screen login-screen active">
+        <div class="login-card">
+            <div class="logo-container">
+                <div class="logo">
+                    <span class="logo-text">O</span>
                 </div>
-
-                <div id="signupForm" style="display: none;">
-                    <div class="input-group">
-                        <label>Full Name</label>
-                        <input type="text" id="signupName" placeholder="John Doe">
-                    </div>
-                    <div class="input-group">
-                        <label>Phone Number</label>
-                        <input type="tel" id="signupPhone" placeholder="+254 700 000 000">
-                    </div>
-                    <div class="input-group">
-                        <label>Password</label>
-                        <input type="password" id="signupPassword" placeholder="Create a password">
-                    </div>
-                    <button class="btn btn-primary" onclick="signup()">Create Account</button>
-                    <button class="btn btn-secondary" onclick="showLogin()">Back to Login</button>
-                </div>
+                <h1 class="app-title">Oloo App</h1>
+                <p class="app-subtitle">Stay Connected, Always</p>
             </div>
-        </div>
-
-        <!-- Main App -->
-        <div class="app-container" id="appContainer">
-            <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <div class="user-profile">
-                        <div class="avatar" id="userAvatar">U</div>
-                        <span id="userName">User</span>
-                    </div>
-                    <div class="header-actions">
-                        <button class="icon-btn" onclick="alert('New Chat')">💬</button>
-                        <button class="icon-btn" onclick="alert('Settings')">⚙️</button>
-                        <button class="icon-btn" onclick="logout()">🚪</button>
-                    </div>
-                </div>
-
-                <div class="search-bar">
-                    <input type="text" placeholder="Search contacts..." onkeyup="searchContacts(this.value)">
-                </div>
-
-                <div class="contacts-list" id="contactsList">
-                    <!-- Contacts will be populated here -->
-                </div>
+            <div class="input-group">
+                <input type="tel" placeholder="Phone Number" id="loginPhone">
             </div>
-
-            <!-- Chat Area -->
-            <div class="chat-area" id="chatArea">
-                <div class="welcome-screen" id="welcomeScreen">
-                    <div class="welcome-logo">O</div>
-                    <div class="welcome-text">
-                        <h2>Welcome to Oloo</h2>
-                        <p>Select a contact to start chatting</p>
-                    </div>
-                    <div class="features">
-                        <div class="feature">
-                            <div class="feature-icon">💬</div>
-                            <div class="feature-text">Light Messaging<br>Without Data</div>
-                        </div>
-                        <div class="feature">
-                            <div class="feature-icon">📞</div>
-                            <div class="feature-text">Crystal Clear<br>Voice Calls</div>
-                        </div>
-                        <div class="feature">
-                            <div class="feature-icon">📹</div>
-                            <div class="feature-text">HD Video<br>Calls</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="chatContainer" style="display: none; height: 100%; flex-direction: column;">
-                    <div class="chat-header">
-                        <div class="chat-user-info">
-                            <button class="icon-btn" onclick="backToContacts()" style="display: none;" id="backBtn">◀</button>
-                            <div class="contact-avatar" id="chatAvatar">A</div>
-                            <div>
-                                <div class="contact-name" id="chatName">Contact</div>
-                                <div style="font-size: 12px; opacity: 0.8;">Online</div>
-                            </div>
-                        </div>
-                        <div class="chat-actions">
-                            <button class="icon-btn" onclick="startCall('voice')">📞</button>
-                            <button class="icon-btn" onclick="startCall('video')">📹</button>
-                            <button class="icon-btn" onclick="alert('More options')">⋮</button>
-                        </div>
-                    </div>
-
-                    <div class="messages-container">
-                        <div class="hieroglyphic-bg" id="hieroglyphicBg">
-                            𓀀 𓀁 𓀂 𓀃 𓀄 𓀅 𓀆 𓀇 𓀈 𓀉 𓀊 𓀋 𓀌 𓀍 𓀎 𓀏 𓀐 𓀑 𓀒 𓀓 𓀔 𓀕 𓀖 𓀗 𓀘 𓀙 𓀚 𓀛 𓀜 𓀝 𓀞 𓀟 𓀠 𓀡 𓀢 𓀣 𓀤 𓀥 𓀦 𓀧 𓀨 𓀩
-                            𓁀 𓁁 𓁂 𓁃 𓁄 𓁅 𓁆 𓁇 𓁈 𓁉 𓁊 𓁋 𓁌 𓁍 𓁎 𓁏 𓁐 𓁑 𓁒 𓁓 𓁔 𓁕 𓁖 𓁗 𓁘 𓁙 𓁚 𓁛 𓁜 𓁝 𓁞 𓁟 𓁠 𓁡 𓁢 𓁣 𓁤 𓁥 𓁦 𓁧 𓁨 𓁩
-                            𓂀 𓂁 𓂂 𓂃 𓂄 𓂅 𓂆 𓂇 𓂈 𓂉 𓂊 𓂋 𓂌 𓂍 𓂎 𓂏 𓂐 𓂑 𓂒 𓂓 𓂔 𓂕 𓂖 𓂗 𓂘 𓂙 𓂚 𓂛 𓂜 𓂝 𓂞 𓂟 𓂠 𓂡 𓂢 𓂣 𓂤 𓂥 𓂦 𓂧 𓂨 𓂩
-                            𓃀 𓃁 𓃂 𓃃 𓃄 𓃅 𓃆 𓃇 𓃈 𓃉 𓃊 𓃋 𓃌 𓃍 𓃎 𓃏 𓃐 𓃑 𓃒 𓃓 𓃔 𓃕 𓃖 𓃗 𓃘 𓃙 𓃚 𓃛 𓃜 𓃝 𓃞 𓃟 𓃠 𓃡 𓃢 𓃣 𓃤 𓃥 𓃦 𓃧 𓃨 𓃩
-                            𓄀 𓄁 𓄂 𓄃 𓄄 𓄅 𓄆 𓄇 𓄈 𓄉 𓄊 𓄋 𓄌 𓄍 𓄎 𓄏 𓄐 𓄑 𓄒 𓄓 𓄔 𓄕 𓄖 𓄗 𓄘 𓄙 𓄚 𓄛 𓄜 𓄝 𓄞 𓄟 𓄠 𓄡 𓄢 𓄣 𓄤 𓄥 𓄦 𓄧 𓄨 𓄩
-                        </div>
-                        <div class="ankh-symbol">☥</div>
-                        <div class="messages" id="messages">
-                            <!-- Messages will appear here -->
-                        </div>
-                    </div>
-
-                    <div class="message-input-container">
-                        <button class="icon-btn" style="color: var(--deep-sky);">😊</button>
-                        <button class="icon-btn" style="color: var(--deep-sky);">📎</button>
-                        <input type="text" class="message-input" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-                        <button class="send-btn" onclick="sendMessage()">➤</button>
-                    </div>
-                </div>
+            <div class="input-group">
+                <input type="password" placeholder="Password" id="loginPassword">
             </div>
+            <button class="btn btn-primary" onclick="showScreen('chatsScreen')">Login</button>
+            <button class="btn btn-secondary" onclick="showScreen('signupScreen')">Create Account</button>
         </div>
     </div>
 
-    <!-- Call Modal -->
-    <div class="call-modal" id="callModal">
-        <div class="call-content">
-            <div class="call-avatar" id="callAvatar">A</div>
-            <div class="call-name" id="callContactName">Contact</div>
-            <div class="call-status" id="callStatus">Calling...</div>
-            <div class="call-actions">
-                <button class="call-btn mute" onclick="toggleMute()">🔇</button>
-                <button class="call-btn end" onclick="endCall()">📞</button>
+    <div id="signupScreen" class="screen login-screen">
+        <div class="login-card">
+            <button class="back-btn" onclick="showScreen('loginScreen')" style="color: #228B22; margin-bottom: 16px;">
+                <i data-feather="arrow-left"></i>
+            </button>
+            <div class="logo-container">
+                <div class="logo" style="width: 80px; height: 80px;">
+                    <span class="logo-text" style="font-size: 40px;">O</span>
+                </div>
+                <h2 class="app-title" style="font-size: 24px;">Create Account</h2>
             </div>
+            <div class="input-group">
+                <input type="text" placeholder="Full Name">
+            </div>
+            <div class="input-group">
+                <input type="tel" placeholder="Phone Number">
+            </div>
+            <div class="input-group">
+                <input type="email" placeholder="Email (Optional)">
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="Password">
+            </div>
+            <div class="input-group">
+                <input type="password" placeholder="Confirm Password">
+            </div>
+            <button class="btn btn-primary" onclick="showScreen('chatsScreen')">Sign Up</button>
+        </div>
+    </div>
+
+    <div id="chatsScreen" class="screen chats-screen">
+        <div class="header">
+            <div class="header-top">
+                <div class="header-left">
+                    <div class="header-logo">O</div>
+                    <h1 class="header-title">Oloo</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn"><i data-feather="camera"></i></button>
+                    <button class="icon-btn"><i data-feather="search"></i></button>
+                    <button class="icon-btn"><i data-feather="more-vertical"></i></button>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search chats...">
+            </div>
+        </div>
+
+        <div class="chat-list" id="chatList">
+            <div class="chat-item" onclick="openChat('John Kamau', true)">
+                <div class="avatar-container">
+                    <div class="avatar">J</div>
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-info">
+                    <div class="chat-header">
+                        <span class="chat-name">John Kamau</span>
+                        <span class="chat-time">10:36 AM</span>
+                    </div>
+                    <p class="chat-last-msg">Sure, sounds good!</p>
+                </div>
+            </div>
+
+            <div class="chat-item" onclick="openChat('Mary Wanjiku', true)">
+                <div class="avatar-container">
+                    <div class="avatar">M</div>
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-info">
+                    <div class="chat-header">
+                        <span class="chat-name">Mary Wanjiku</span>
+                        <span class="chat-time">9:20 AM</span>
+                    </div>
+                    <p class="chat-last-msg">Yes! It was amazing!</p>
+                </div>
+                <div class="unread-badge">2</div>
+            </div>
+
+            <div class="chat-item" onclick="openChat('David Ochieng', false)">
+                <div class="avatar-container">
+                    <div class="avatar">D</div>
+                </div>
+                <div class="chat-info">
+                    <div class="chat-header">
+                        <span class="chat-name">David Ochieng</span>
+                        <span class="chat-time">Yesterday</span>
+                    </div>
+                    <p class="chat-last-msg">Meeting at 3 PM today</p>
+                </div>
+            </div>
+
+            <div class="chat-item" onclick="openChat('Grace Akinyi', false)">
+                <div class="avatar-container">
+                    <div class="avatar">G</div>
+                </div>
+                <div class="chat-info">
+                    <div class="chat-header">
+                        <span class="chat-name">Grace Akinyi</span>
+                        <span class="chat-time">Yesterday</span>
+                    </div>
+                    <p class="chat-last-msg">Thanks for your help!</p>
+                </div>
+            </div>
+
+            <div class="chat-item" onclick="openChat('Peter Mwangi', true)">
+                <div class="avatar-container">
+                    <div class="avatar">P</div>
+                    <div class="online-indicator"></div>
+                </div>
+                <div class="chat-info">
+                    <div class="chat-header">
+                        <span class="chat-name">Peter Mwangi</span>
+                        <span class="chat-time">2 days ago</span>
+                    </div>
+                    <p class="chat-last-msg">See you tomorrow</p>
+                </div>
+                <div class="unread-badge">1</div>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <button class="nav-item active">
+                <i data-feather="message-circle"></i>
+                <span class="nav-label">Chats</span>
+            </button>
+            <button class="nav-item">
+                <i data-feather="users"></i>
+                <span class="nav-label">Contacts</span>
+            </button>
+            <button class="nav-item">
+                <i data-feather="phone"></i>
+                <span class="nav-label">Calls</span>
+            </button>
+            <button class="nav-item">
+                <i data-feather="settings"></i>
+                <span class="nav-label">Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="chatDetailScreen" class="screen chat-detail-screen">
+        <div class="chat-detail-header">
+            <div class="chat-detail-left">
+                <button class="back-btn" onclick="showScreen('chatsScreen')">
+                    <i data-feather="arrow-left"></i>
+                </button>
+                <div class="chat-detail-avatar" id="chatDetailAvatar">J</div>
+                <div class="chat-detail-info">
+                    <h3 id="chatDetailName">John Kamau</h3>
+                    <p class="chat-status" id="chatDetailStatus">Online</p>
+                </div>
+            </div>
+            <div class="chat-detail-actions">
+                <button class="icon-btn"><i data-feather="video"></i></button>
+                <button class="icon-btn"><i data-feather="phone"></i></button>
+                <button class="icon-btn"><i data-feather="more-vertical"></i></button>
+            </div>
+        </div>
+
+        <div class="messages-area">
+            <div class="horus-eagle">🦅</div>
+            <div class="messages-container" id="messagesContainer">
+                <div class="message received">
+                    <div class="message-bubble">
+                        <p class="message-text">Hey! How are you?</p>
+                        <div class="message-meta">
+                            <span>10:30 AM</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="message sent">
+                    <div class="message-bubble">
+                        <p class="message-text">I am good, thanks! How about you?</p>
+                        <div class="message-meta">
+                            <span>10:32 AM</span>
+                            <i data-feather="check-check" style="width: 14px; height: 14px;"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="message received">
+                    <div class="message-bubble">
+                        <p class="message-text">Doing great! Want to catch up later?</p>
+                        <div class="message-meta">
+                            <span>10:35 AM</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="message sent">
+                    <div class="message-bubble">
+                        <p class="message-text">Sure, sounds good!</p>
+                        <div class="message-meta">
+                            <span>10:36 AM</span>
+                            <i data-feather="check-check" style="width: 14px; height: 14px;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="message-input-area">
+            <button class="icon-btn" style="color: #666;">
+                <i data-feather="smile"></i>
+            </button>
+            <button class="icon-btn" style="color: #666;">
+                <i data-feather="paperclip"></i>
+            </button>
+            <input type="text" class="message-input" id="messageInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                <i data-feather="send" style="width: 20px; height: 20px;"></i>
+            </button>
         </div>
     </div>
 
     <script>
-        // Global state
-        let currentUser = null;
-        let selectedContact = null;
-        let contacts = [
-            { id: 1, name: 'Sarah Johnson', phone: '+254701234567', lastMessage: 'Hey! How are you?', time: '10:30 AM', online: true },
-            { id: 2, name: 'David Kimani', phone: '+254702345678', lastMessage: 'See you tomorrow', time: '9:15 AM', online: true },
-            { id: 3, name: 'Mary Wanjiru', phone: '+254703456789', lastMessage: 'Thanks for the help!', time: 'Yesterday', online: false },
-            { id: 4, name: 'James Omondi', phone: '+254704567890', lastMessage: 'Meeting at 3 PM', time: 'Yesterday', online: true },
-            { id: 5, name: 'Grace Achieng', phone: '+254705678901', lastMessage: 'Happy birthday! 🎉', time: 'Monday', online: false }
-        ];
-        let messages = {};
-        let isMuted = false;
+        var currentChatName = '';
+        var currentChatOnline = false;
 
-        // Initialize the app
-        function init() {
-            generateSampleMessages();
-            loadContacts();
-            console.log('App initialized');
-        }
-
-        // Authentication functions
-        function showSignup() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('signupForm').style.display = 'block';
-        }
-
-        function showLogin() {
-            document.getElementById('signupForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
-        }
-
-        function signup() {
-            const name = document.getElementById('signupName').value.trim();
-            const phone = document.getElementById('signupPhone').value.trim();
-            const password = document.getElementById('signupPassword').value.trim();
-
-            if (name && phone && password) {
-                currentUser = { name, phone };
-                document.getElementById('userName').textContent = name;
-                document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
-                
-                // Hide auth screen and show app
-                const authScreen = document.getElementById('authScreen');
-                const appContainer = document.getElementById('appContainer');
-                
-                authScreen.style.display = 'none';
-                appContainer.style.display = 'flex';
-                appContainer.classList.add('active');
-                
-                // Load contacts after showing app
-                loadContacts();
-            } else {
-                alert('Please fill in all fields');
+        function showScreen(screenId) {
+            var screens = document.querySelectorAll('.screen');
+            for (var i = 0; i < screens.length; i++) {
+                screens[i].classList.remove('active');
             }
+            document.getElementById(screenId).classList.add('active');
+            feather.replace();
         }
 
-        function login() {
-            const phone = document.getElementById('loginPhone').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-
-            if (phone && password) {
-                currentUser = { name: 'Demo User', phone };
-                document.getElementById('userName').textContent = 'Demo User';
-                document.getElementById('userAvatar').textContent = 'D';
-                
-                // Hide auth screen and show app
-                const authScreen = document.getElementById('authScreen');
-                const appContainer = document.getElementById('appContainer');
-                
-                authScreen.style.display = 'none';
-                appContainer.style.display = 'flex';
-                appContainer.classList.add('active');
-                
-                // Load contacts after showing app
-                loadContacts();
-            } else {
-                alert('Please enter phone and password');
-            }
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                currentUser = null;
-                selectedContact = null;
-                document.getElementById('authScreen').style.display = 'flex';
-                document.getElementById('appContainer').classList.remove('active');
-                showLogin();
-            }
-        }
-
-        // Contact functions
-        function loadContacts() {
-            const contactsList = document.getElementById('contactsList');
-            contactsList.innerHTML = '';
-
-            contacts.forEach(contact => {
-                const contactEl = document.createElement('div');
-                contactEl.className = 'contact-item';
-                contactEl.onclick = () => selectContact(contact.id);
-                
-                contactEl.innerHTML = `
-                    <div class="contact-avatar">${contact.name.charAt(0)}</div>
-                    <div class="contact-info">
-                        <div class="contact-name">${contact.name}</div>
-                        <div class="contact-message">${contact.lastMessage}</div>
-                    </div>
-                    <div>
-                        <div class="contact-time">${contact.time}</div>
-                        ${contact.online ? '<div class="status-indicator"></div>' : ''}
-                    </div>
-                `;
-                
-                contactsList.appendChild(contactEl);
-            });
-        }
-
-        function searchContacts(query) {
-            const contactItems = document.querySelectorAll('.contact-item');
-            contactItems.forEach(item => {
-                const name = item.querySelector('.contact-name').textContent.toLowerCase();
-                if (name.includes(query.toLowerCase())) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        }
-
-        function selectContact(contactId) {
-            selectedContact = contacts.find(c => c.id === contactId);
-            if (!selectedContact) return;
-
-            // Update UI
-            document.querySelectorAll('.contact-item').forEach(item => {
-                item.classList.remove('active');
-            });
+        function openChat(name, isOnline) {
+            currentChatName = name;
+            currentChatOnline = isOnline;
             
-            // Find and activate the clicked contact
-            const contactItems = document.querySelectorAll('.contact-item');
-            contactItems.forEach(item => {
-                const name = item.querySelector('.contact-name').textContent;
-                if (name === selectedContact.name) {
-                    item.classList.add('active');
-                }
-            });
-
-            // Show chat
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('chatContainer').style.display = 'flex';
+            document.getElementById('chatDetailName').textContent = name;
+            document.getElementById('chatDetailAvatar').textContent = name[0];
+            document.getElementById('chatDetailStatus').textContent = isOnline ? 'Online' : 'Last seen recently';
             
-            // Update chat header
-            document.getElementById('chatName').textContent = selectedContact.name;
-            document.getElementById('chatAvatar').textContent = selectedContact.name.charAt(0);
-            
-            // Load messages
-            loadMessages(contactId);
-
-            // Mobile responsive
-            if (window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('mobile-active');
-                document.getElementById('chatArea').classList.add('mobile-active');
-                document.getElementById('backBtn').style.display = 'block';
-            }
-        }
-
-        function backToContacts() {
-            document.getElementById('sidebar').classList.add('mobile-active');
-            document.getElementById('chatArea').classList.remove('mobile-active');
-        }
-
-        // Message functions
-        function generateSampleMessages() {
-            messages = {
-                1: [
-                    { text: 'Hey! How are you?', sent: false, time: '10:25 AM' },
-                    { text: 'I\'m good, thanks! How about you?', sent: true, time: '10:26 AM' },
-                    { text: 'Doing great! Want to meet up later?', sent: false, time: '10:30 AM' }
-                ],
-                2: [
-                    { text: 'Don\'t forget about the meeting tomorrow', sent: true, time: '9:10 AM' },
-                    { text: 'See you tomorrow', sent: false, time: '9:15 AM' }
-                ],
-                3: [
-                    { text: 'Can you help me with that project?', sent: false, time: '2:30 PM' },
-                    { text: 'Sure, I\'ll send you the files', sent: true, time: '2:35 PM' },
-                    { text: 'Thanks for the help!', sent: false, time: '3:00 PM' }
-                ],
-                4: [
-                    { text: 'Meeting at 3 PM', sent: false, time: '11:00 AM' },
-                    { text: 'Got it, I\'ll be there', sent: true, time: '11:05 AM' }
-                ],
-                5: [
-                    { text: 'Happy birthday! 🎉', sent: false, time: '8:00 AM' },
-                    { text: 'Thank you so much! 😊', sent: true, time: '8:30 AM' }
-                ]
-            };
-        }
-
-        function loadMessages(contactId) {
-            const messagesContainer = document.getElementById('messages');
-            messagesContainer.innerHTML = '';
-
-            const contactMessages = messages[contactId] || [];
-            
-            contactMessages.forEach(msg => {
-                addMessageToUI(msg.text, msg.sent, msg.time);
-            });
-
-            // Scroll to bottom
-            messagesContainer.parentElement.scrollTop = messagesContainer.parentElement.scrollHeight;
-        }
-
-        function addMessageToUI(text, isSent, time) {
-            const messagesContainer = document.getElementById('messages');
-            const messageEl = document.createElement('div');
-            messageEl.className = `message ${isSent ? 'sent' : 'received'}`;
-            
-            if (!time) {
-                const now = new Date();
-                time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-            }
-            
-            messageEl.innerHTML = `
-                <div class="message-bubble">
-                    <div class="message-text">${text}</div>
-                    <div class="message-time">${time}</div>
-                </div>
-            `;
-            
-            messagesContainer.appendChild(messageEl);
-            messagesContainer.parentElement.scrollTop = messagesContainer.parentElement.scrollHeight;
+            showScreen('chatDetailScreen');
         }
 
         function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
+            var input = document.getElementById('messageInput');
+            var message = input.value.trim();
             
-            if (!text || !selectedContact) return;
-            
-            // Add to messages
-            if (!messages[selectedContact.id]) {
-                messages[selectedContact.id] = [];
-            }
-            
-            const now = new Date();
-            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-            
-            messages[selectedContact.id].push({
-                text: text,
-                sent: true,
-                time: time
-            });
-            
-            addMessageToUI(text, true, time);
-            input.value = '';
-            
-            // Update contact last message
-            const contact = contacts.find(c => c.id === selectedContact.id);
-            if (contact) {
-                contact.lastMessage = text;
-                contact.time = time;
-                loadContacts();
-            }
-            
-            // Simulate response after 2 seconds
-            setTimeout(() => {
-                simulateResponse();
-            }, 2000);
-        }
-
-        function simulateResponse() {
-            if (!selectedContact) return;
-            
-            const responses = [
-                'That sounds great!',
-                'Sure, I\'ll check that out',
-                'Thanks for letting me know',
-                'I agree with you',
-                'Let me get back to you on that',
-                'Absolutely!',
-                'I\'ll think about it',
-                'Good idea!'
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            const now = new Date();
-            const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-            
-            messages[selectedContact.id].push({
-                text: randomResponse,
-                sent: false,
-                time: time
-            });
-            
-            addMessageToUI(randomResponse, false, time);
-            
-            // Update contact last message
-            const contact = contacts.find(c => c.id === selectedContact.id);
-            if (contact) {
-                contact.lastMessage = randomResponse;
-                contact.time = time;
-                loadContacts();
+            if (message) {
+                var container = document.getElementById('messagesContainer');
+                var now = new Date();
+                var time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                
+                var messageDiv = document.createElement('div');
+                messageDiv.className = 'message sent';
+                messageDiv.innerHTML = '<div class="message-bubble"><p class="message-text">' + message + '</p><div class="message-meta"><span>' + time + '</span><i data-feather="check" style="width: 14px; height: 14px;"></i></div></div>';
+                
+                container.appendChild(messageDiv);
+                input.value = '';
+                
+                var messagesArea = container.parentElement;
+                messagesArea.scrollTop = messagesArea.scrollHeight;
+                
+                feather.replace();
             }
         }
 
@@ -1075,49 +818,24 @@
             }
         }
 
-        // Call functions
-        function startCall(type) {
-            if (!selectedContact) return;
+        document.addEventListener('DOMContentLoaded', function() {
+            var input = document.getElementById('messageInput');
+            var sendBtn = document.getElementById('sendBtn');
             
-            const modal = document.getElementById('callModal');
-            const callAvatar = document.getElementById('callAvatar');
-            const callName = document.getElementById('callContactName');
-            const callStatus = document.getElementById('callStatus');
-            
-            callAvatar.textContent = selectedContact.name.charAt(0);
-            callName.textContent = selectedContact.name;
-            callStatus.textContent = type === 'video' ? 'Video calling...' : 'Calling...';
-            
-            modal.classList.add('active');
-            
-            // Simulate call connection after 3 seconds
-            setTimeout(() => {
-                callStatus.textContent = type === 'video' ? 'Video call in progress' : 'Call in progress';
-            }, 3000);
-        }
-
-        function endCall() {
-            const modal = document.getElementById('callModal');
-            modal.classList.remove('active');
-            isMuted = false;
-        }
-
-        function toggleMute() {
-            isMuted = !isMuted;
-            const muteBtn = event.target;
-            muteBtn.textContent = isMuted ? '🔊' : '🔇';
-        }
-
-        // Initialize on page load
-        window.onload = init;
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                document.getElementById('sidebar').classList.remove('mobile-active');
-                document.getElementById('chatArea').classList.remove('mobile-active');
-                document.getElementById('backBtn').style.display = 'none';
+            if (input && sendBtn) {
+                input.addEventListener('input', function() {
+                    if (input.value.trim()) {
+                        sendBtn.innerHTML = '<i data-feather="send" style="width: 20px; height: 20px;"></i>';
+                        sendBtn.className = 'send-btn';
+                    } else {
+                        sendBtn.innerHTML = '<i data-feather="mic" style="width: 20px; height: 20px;"></i>';
+                        sendBtn.className = 'send-btn mic-btn';
+                    }
+                    feather.replace();
+                });
             }
+            
+            feather.replace();
         });
     </script>
 </body>
